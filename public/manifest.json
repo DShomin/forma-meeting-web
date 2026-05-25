@@ -3,7 +3,7 @@
   "short_name": "FORMA",
   "description": "회의 녹음 파일을 업로드하고 Confluence 회의록을 생성합니다",
   "start_url": "/",
-  "display": "standalone",
+  "display": "minimal-ui",
   "background_color": "#ffffff",
   "theme_color": "#4F46E5",
   "lang": "ko",
