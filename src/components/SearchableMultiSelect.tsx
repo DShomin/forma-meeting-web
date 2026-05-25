@@ -42,9 +42,8 @@ export default function SearchableMultiSelect({
 }: SearchableMultiSelectProps) {
   const [searchText, setSearchText] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Filter options based on search text
   const filteredOptions = options.filter((option) =>
     option.label.toLowerCase().includes(searchText.toLowerCase()),
   );
@@ -78,30 +77,31 @@ export default function SearchableMultiSelect({
   );
 
   const handleInputFocus = useCallback(() => {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
     if (!disabled) {
       setIsOpen(true);
     }
   }, [disabled]);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent | TouchEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
+  const handleInputBlur = useCallback(() => {
+    blurTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  }, []);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
+  const handleListMouseDown = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+  }, []);
+
+  useEffect(() => {
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
     };
   }, []);
 
-  // Get label for a selected value
   const getOptionLabel = useCallback(
     (value: string): string => {
       return options.find((o) => o.value === value)?.label ?? value;
@@ -110,7 +110,7 @@ export default function SearchableMultiSelect({
   );
 
   return (
-    <div className="space-y-2" ref={containerRef}>
+    <div className="space-y-2">
       {label && <Label htmlFor={id}>{label}</Label>}
 
       {/* Selected tags */}
@@ -149,6 +149,7 @@ export default function SearchableMultiSelect({
           value={searchText}
           onChange={handleSearchChange}
           onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
           placeholder={placeholder}
           disabled={disabled}
           className="h-11 pl-9 text-base"
@@ -166,8 +167,10 @@ export default function SearchableMultiSelect({
             id={`${id}-listbox`}
             role="listbox"
             aria-multiselectable="true"
-            className="absolute z-10 mt-1.5 max-h-60 w-full overflow-auto overscroll-contain rounded-xl border border-border bg-card py-1 shadow-lg"
+            className="absolute z-10 mt-1.5 max-h-44 w-full overflow-auto overscroll-contain rounded-xl border border-border bg-card py-1 shadow-lg"
             data-testid="options-listbox"
+            onMouseDown={handleListMouseDown}
+            onTouchStart={handleListMouseDown}
           >
             {filteredOptions.length === 0 ? (
               <li className="px-4 py-3 text-center text-sm text-muted-foreground">
