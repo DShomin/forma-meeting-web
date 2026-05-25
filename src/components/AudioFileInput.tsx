@@ -1,11 +1,12 @@
 "use client";
 
 import { useRef, useState, useCallback, type DragEvent } from "react";
-import { Upload, FileAudio, X } from "lucide-react";
+import { Upload, FileAudio, X, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const ACCEPTED_AUDIO_TYPES = [
   "audio/x-m4a",
@@ -123,7 +124,17 @@ export default function AudioFileInput({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={id}>녹음 파일</Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor={id}>녹음 파일</Label>
+        <Link
+          href="/guide"
+          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          aria-label="음성 메모 업로드 가이드"
+        >
+          <Info className="size-3.5" />
+          업로드 방법
+        </Link>
+      </div>
 
       {/* Hidden native file input */}
       <Input
