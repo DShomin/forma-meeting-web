@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
 import SearchableMultiSelect, {
   type SelectOption,
 } from "../SearchableMultiSelect";
@@ -253,24 +253,26 @@ describe("SearchableMultiSelect", () => {
     expect(unselectedOption.getAttribute("aria-selected")).toBe("false");
   });
 
-  it("closes the dropdown when clicking outside", () => {
+  it("closes the dropdown when input loses focus", async () => {
+    vi.useFakeTimers();
     const onChange = vi.fn();
     render(
-      <div>
-        <div data-testid="outside">Outside area</div>
-        <SearchableMultiSelect
-          options={mockOptions}
-          selectedValues={[]}
-          onChange={onChange}
-        />
-      </div>,
+      <SearchableMultiSelect
+        options={mockOptions}
+        selectedValues={[]}
+        onChange={onChange}
+      />,
     );
 
     fireEvent.focus(screen.getByTestId("search-input"));
     expect(screen.getByTestId("options-listbox")).toBeInTheDocument();
 
-    fireEvent.mouseDown(screen.getByTestId("outside"));
+    act(() => {
+      fireEvent.blur(screen.getByTestId("search-input"));
+      vi.advanceTimersByTime(200);
+    });
     expect(screen.queryByTestId("options-listbox")).not.toBeInTheDocument();
+    vi.useRealTimers();
   });
 
   it("does not open dropdown when disabled", () => {

@@ -29,7 +29,7 @@ describe("Mobile phone browser accessibility", () => {
       expect(metadata.manifest).toBe("/manifest.json");
     });
 
-    it("manifest.json exists and has standalone display for app-like mobile experience", () => {
+    it("manifest.json exists and has minimal-ui display for mobile experience", () => {
       const manifestPath = path.resolve(
         __dirname,
         "../public/manifest.json"
@@ -43,7 +43,7 @@ describe("Mobile phone browser accessibility", () => {
         ? manifestPath
         : altPath;
       const manifest = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-      expect(manifest.display).toBe("standalone");
+      expect(manifest.display).toBe("minimal-ui");
       expect(manifest.start_url).toBe("/");
     });
 

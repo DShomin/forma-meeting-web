@@ -113,7 +113,18 @@ test.describe("회의록 업로드 - API 연동", () => {
       }),
     );
 
-    await page.route(/\/api\/meetings/, (route) =>
+    await page.route("**/api/upload-config", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          backendUrl: "https://mock-backend.test",
+          token: "test-token",
+        }),
+      }),
+    );
+
+    await page.route("**/mock-backend.test/meetings", (route) =>
       route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -159,7 +170,18 @@ test.describe("회의록 업로드 - API 연동", () => {
       }),
     );
 
-    await page.route(/\/api\/meetings/, (route) =>
+    await page.route("**/api/upload-config", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          backendUrl: "https://mock-backend.test",
+          token: "test-token",
+        }),
+      }),
+    );
+
+    await page.route("**/mock-backend.test/meetings", (route) =>
       route.fulfill({
         status: 200,
         contentType: "application/json",

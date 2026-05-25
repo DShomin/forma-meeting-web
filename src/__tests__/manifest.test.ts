@@ -27,8 +27,8 @@ describe("PWA manifest.json", () => {
     expect(manifest.start_url).toBe("/");
   });
 
-  it("has display set to standalone", () => {
-    expect(manifest.display).toBe("standalone");
+  it("has display set to minimal-ui", () => {
+    expect(manifest.display).toBe("minimal-ui");
   });
 
   it("has lang set to ko", () => {
