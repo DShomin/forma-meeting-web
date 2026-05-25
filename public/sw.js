@@ -1,7 +1,6 @@
-const CACHE_NAME = "record-meet-v1";
+const CACHE_NAME = "record-meet-v2";
 const APP_SHELL = ["/", "/manifest.json"];
 
-// Install: pre-cache app shell
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
@@ -9,7 +8,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate: clean up old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -23,10 +21,18 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: network-first for API, cache-first for static assets
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  // Auth routes must NEVER be handled by SW — Safari rejects redirected SW responses
+  if (url.pathname.startsWith("/api/auth")) {
+    return;
+  }
+
+  if (request.method !== "GET") {
+    return;
+  }
 
   // Network-first for API calls
   if (url.pathname.startsWith("/api/") || url.origin !== self.location.origin) {
