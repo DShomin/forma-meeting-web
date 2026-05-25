@@ -7,22 +7,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     {
       id: "atlassian",
       name: "Atlassian",
-      type: "oidc",
-      issuer: "https://auth.atlassian.com",
-      clientId: process.env.AUTH_ATLASSIAN_ID,
-      clientSecret: process.env.AUTH_ATLASSIAN_SECRET,
+      type: "oauth",
       authorization: {
+        url: "https://auth.atlassian.com/authorize",
         params: {
-          scope: "openid email profile read:me read:confluence-content.summary offline_access",
           audience: "api.atlassian.com",
+          scope: "read:me read:confluence-content.summary offline_access",
           prompt: "consent",
+          response_type: "code",
         },
       },
-      checks: ["state"],
+      token: "https://auth.atlassian.com/oauth/token",
+      userinfo: "https://api.atlassian.com/me",
+      clientId: process.env.AUTH_ATLASSIAN_ID,
+      clientSecret: process.env.AUTH_ATLASSIAN_SECRET,
       profile(profile) {
         return {
-          id: profile.sub,
-          name: profile.name ?? profile.nickname,
+          id: profile.account_id,
+          name: profile.name ?? profile.nickname ?? profile.email,
           email: profile.email,
           image: profile.picture,
         };
