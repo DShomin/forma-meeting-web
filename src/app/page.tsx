@@ -93,7 +93,7 @@ export default function HomePage() {
 
   return (
     <main className="flex min-h-[calc(100dvh-3.5rem)] flex-col items-center justify-start px-4 py-6">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-lg overflow-visible">
         <CardHeader>
           <h1 className="text-xl font-semibold">{ko.pageTitle}</h1>
           <CardDescription>{ko.pageDescription}</CardDescription>

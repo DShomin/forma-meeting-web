@@ -59,12 +59,29 @@ export function useMeetingUpload(): UseMeetingUploadReturn {
   }, []);
 
   const upload = useCallback(
-    ({ file, title, attendees, meetingDate }: UploadParams) => {
-      // Reset previous state
+    async ({ file, title, attendees, meetingDate }: UploadParams) => {
       setProgress(0);
       setStatus("uploading");
       setConfluenceUrl(null);
       setError(null);
+
+      let backendUrl: string;
+      let token: string;
+      try {
+        const configRes = await fetch("/api/upload-config");
+        if (!configRes.ok) {
+          setError("업로드 설정을 가져오지 못했습니다.");
+          setStatus("error");
+          return;
+        }
+        const config = await configRes.json();
+        backendUrl = config.backendUrl;
+        token = config.token;
+      } catch {
+        setError("네트워크 오류가 발생했습니다.");
+        setStatus("error");
+        return;
+      }
 
       const formData = new FormData();
       formData.append("audio", file);
@@ -124,7 +141,8 @@ export function useMeetingUpload(): UseMeetingUploadReturn {
         setStatus("error");
       };
 
-      xhr.open("POST", "/api/meetings");
+      xhr.open("POST", `${backendUrl}/meetings`);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
       xhr.send(formData);
     },
     [],

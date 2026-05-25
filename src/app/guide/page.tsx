@@ -67,16 +67,17 @@ export default function GuidePage() {
             <p>iPhone 홈 화면에서 <strong>음성 메모</strong> 앱을 실행합니다.</p>
           </Step>
 
-          <Step step={2} title="녹음 파일을 탭합니다">
-            <p>업로드할 회의 녹음을 탭하면 녹음이 펼쳐지면서 재생 버튼과 함께 편집 도구가 나타납니다.</p>
+          <Step step={2} title="녹음을 탭한 뒤 ⋯ 버튼을 탭합니다">
+            <p>업로드할 녹음을 탭하고, 펼쳐진 녹음의 오른쪽 위 <strong>⋯</strong> (점 세 개) 버튼을 탭합니다.</p>
           </Step>
 
-          <Step step={3} title="⋯ (더보기) 버튼을 탭합니다">
-            <p>펼쳐진 녹음의 <strong>오른쪽 위</strong>에 있는 <strong>⋯</strong> (점 세 개) 버튼을 탭합니다.</p>
+          <Step step={3} title="Share (공유)를 탭합니다">
+            <p>메뉴 맨 위의 <strong>&ldquo;Share&rdquo;</strong> (공유) 버튼을 탭합니다.</p>
+            <p>iOS 공유 시트가 나타납니다.</p>
           </Step>
 
           <Step step={4} title="&ldquo;파일에 저장&rdquo;을 선택합니다">
-            <p>팝업 메뉴에서 <strong>&ldquo;파일에 저장&rdquo;</strong>을 탭합니다.</p>
+            <p>공유 시트에서 <strong>&ldquo;파일에 저장&rdquo;</strong> (Save to Files)을 탭합니다.</p>
             <p>파일 앱 화면이 열리면 저장할 위치를 선택합니다.</p>
             <p><strong>&ldquo;나의 iPhone&rdquo;</strong> 또는 <strong>&ldquo;iCloud Drive&rdquo;</strong> 어디든 괜찮습니다.</p>
             <p>오른쪽 상단의 <strong>&ldquo;저장&rdquo;</strong> 버튼을 탭합니다.</p>
