@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 const ALLOWED_SITE_URL = process.env.ALLOWED_CONFLUENCE_SITE_URL!;
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  debug: true,
   providers: [
     {
       id: "atlassian",
@@ -17,10 +18,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           response_type: "code",
         },
       },
-      token: "https://auth.atlassian.com/oauth/token",
-      userinfo: "https://api.atlassian.com/me",
+      token: {
+        url: "https://auth.atlassian.com/oauth/token",
+        async request({ params, provider }: any) {
+          const res = await fetch("https://auth.atlassian.com/oauth/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              grant_type: "authorization_code",
+              client_id: provider.clientId,
+              client_secret: provider.clientSecret,
+              code: params.code,
+              redirect_uri: provider.callbackUrl,
+            }),
+          });
+          const tokens = await res.json();
+          return { tokens };
+        },
+      },
+      userinfo: {
+        url: "https://api.atlassian.com/me",
+        async request({ tokens }: any) {
+          const res = await fetch("https://api.atlassian.com/me", {
+            headers: { Authorization: `Bearer ${tokens.access_token}` },
+          });
+          return await res.json();
+        },
+      },
       clientId: process.env.AUTH_ATLASSIAN_ID,
       clientSecret: process.env.AUTH_ATLASSIAN_SECRET,
+      checks: ["state"],
       profile(profile) {
         return {
           id: profile.account_id,
